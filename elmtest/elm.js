@@ -5201,70 +5201,50 @@ var $author$project$QtttLogic$GameState = F4(
 	function (board, moves, selection, turn) {
 		return {board: board, moves: moves, selection: selection, turn: turn};
 	});
-var $author$project$QtttLogic$Move = F3(
-	function (s1, s2, p) {
-		return {p: p, s1: s1, s2: s2};
-	});
-var $author$project$QtttLogic$O = {$: 'O'};
 var $author$project$QtttLogic$X = {$: 'X'};
-var $elm$core$Array$fromListHelp = F3(
-	function (list, nodeList, nodeListSize) {
-		fromListHelp:
-		while (true) {
-			var _v0 = A2($elm$core$Elm$JsArray$initializeFromList, $elm$core$Array$branchFactor, list);
-			var jsArray = _v0.a;
-			var remainingItems = _v0.b;
-			if (_Utils_cmp(
-				$elm$core$Elm$JsArray$length(jsArray),
-				$elm$core$Array$branchFactor) < 0) {
-				return A2(
-					$elm$core$Array$builderToArray,
-					true,
-					{nodeList: nodeList, nodeListSize: nodeListSize, tail: jsArray});
-			} else {
-				var $temp$list = remainingItems,
-					$temp$nodeList = A2(
-					$elm$core$List$cons,
-					$elm$core$Array$Leaf(jsArray),
-					nodeList),
-					$temp$nodeListSize = nodeListSize + 1;
-				list = $temp$list;
-				nodeList = $temp$nodeList;
-				nodeListSize = $temp$nodeListSize;
-				continue fromListHelp;
-			}
-		}
+var $elm$core$Array$repeat = F2(
+	function (n, e) {
+		return A2(
+			$elm$core$Array$initialize,
+			n,
+			function (_v0) {
+				return e;
+			});
 	});
-var $elm$core$Array$fromList = function (list) {
-	if (!list.b) {
-		return $elm$core$Array$empty;
-	} else {
-		return A3($elm$core$Array$fromListHelp, list, _List_Nil, 0);
-	}
-};
+var $author$project$QtttLogic$initGameState = A4(
+	$author$project$QtttLogic$GameState,
+	A2($elm$core$Array$repeat, 9, $author$project$QtttLogic$Empty),
+	_List_Nil,
+	$elm$core$Maybe$Nothing,
+	$author$project$QtttLogic$X);
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Test$init = function (_v0) {
-	return _Utils_Tuple2(
-		A4(
-			$author$project$QtttLogic$GameState,
-			$elm$core$Array$fromList(
-				_List_fromArray(
-					[$author$project$QtttLogic$Empty, $author$project$QtttLogic$Empty, $author$project$QtttLogic$X, $author$project$QtttLogic$O, $author$project$QtttLogic$Empty, $author$project$QtttLogic$Empty, $author$project$QtttLogic$Empty, $author$project$QtttLogic$Empty, $author$project$QtttLogic$Empty])),
-			_List_fromArray(
-				[
-					A3($author$project$QtttLogic$Move, 0, 1, $author$project$QtttLogic$X),
-					A3($author$project$QtttLogic$Move, 1, 5, $author$project$QtttLogic$O)
-				]),
-			$elm$core$Maybe$Nothing,
-			$author$project$QtttLogic$X),
-		$elm$core$Platform$Cmd$none);
+	return _Utils_Tuple2($author$project$QtttLogic$initGameState, $elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Test$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$none;
 };
+var $author$project$QtttLogic$Move = F3(
+	function (s1, s2, p) {
+		return {p: p, s1: s1, s2: s2};
+	});
+var $author$project$QtttLogic$O = {$: 'O'};
+var $elm$core$Basics$neq = _Utils_notEqual;
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $elm$core$Debug$log = _Debug_log;
 var $elm$core$Bitwise$and = _Bitwise_and;
 var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
 var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
@@ -5307,7 +5287,7 @@ var $elm$core$Array$get = F2(
 			A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, tail)) : $elm$core$Maybe$Just(
 			A3($elm$core$Array$getHelp, startShift, index, tree)));
 	});
-var $author$project$Test$getPiece = F2(
+var $author$project$QtttLogic$getPiece = F2(
 	function (i, arr) {
 		var _v0 = A2($elm$core$Array$get, i, arr);
 		if (_v0.$ === 'Just') {
@@ -5317,7 +5297,87 @@ var $author$project$Test$getPiece = F2(
 			return $author$project$QtttLogic$Empty;
 		}
 	});
-var $elm$core$Basics$neq = _Utils_notEqual;
+var $author$project$QtttLogic$moveFilter = F2(
+	function (board, move) {
+		var _v0 = _Utils_Tuple2(
+			A2($author$project$QtttLogic$getPiece, move.s1, board),
+			A2($author$project$QtttLogic$getPiece, move.s2, board));
+		if ((_v0.a.$ === 'Empty') && (_v0.b.$ === 'Empty')) {
+			var _v1 = _v0.a;
+			var _v2 = _v0.b;
+			return true;
+		} else {
+			return false;
+		}
+	});
+var $author$project$QtttLogic$qCollapse = function (moves) {
+	return _List_Nil;
+};
+var $elm$core$Elm$JsArray$unsafeSet = _JsArray_unsafeSet;
+var $elm$core$Array$setHelp = F4(
+	function (shift, index, value, tree) {
+		var pos = $elm$core$Array$bitMask & (index >>> shift);
+		var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
+		if (_v0.$ === 'SubTree') {
+			var subTree = _v0.a;
+			var newSub = A4($elm$core$Array$setHelp, shift - $elm$core$Array$shiftStep, index, value, subTree);
+			return A3(
+				$elm$core$Elm$JsArray$unsafeSet,
+				pos,
+				$elm$core$Array$SubTree(newSub),
+				tree);
+		} else {
+			var values = _v0.a;
+			var newLeaf = A3($elm$core$Elm$JsArray$unsafeSet, $elm$core$Array$bitMask & index, value, values);
+			return A3(
+				$elm$core$Elm$JsArray$unsafeSet,
+				pos,
+				$elm$core$Array$Leaf(newLeaf),
+				tree);
+		}
+	});
+var $elm$core$Array$set = F3(
+	function (index, value, array) {
+		var len = array.a;
+		var startShift = array.b;
+		var tree = array.c;
+		var tail = array.d;
+		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? array : ((_Utils_cmp(
+			index,
+			$elm$core$Array$tailIndex(len)) > -1) ? A4(
+			$elm$core$Array$Array_elm_builtin,
+			len,
+			startShift,
+			tree,
+			A3($elm$core$Elm$JsArray$unsafeSet, $elm$core$Array$bitMask & index, value, tail)) : A4(
+			$elm$core$Array$Array_elm_builtin,
+			len,
+			startShift,
+			A4($elm$core$Array$setHelp, startShift, index, value, tree),
+			tail));
+	});
+var $author$project$QtttLogic$updateBoard = function (gs) {
+	var pot_moves = A2(
+		$elm$core$Debug$log,
+		'pot_moves',
+		A2(
+			$elm$core$List$filter,
+			$author$project$QtttLogic$moveFilter(gs.board),
+			gs.moves));
+	var new_board = A3(
+		$elm$core$List$foldl,
+		F2(
+			function (_v0, b) {
+				var i = _v0.a;
+				var p = _v0.b;
+				return A3($elm$core$Array$set, i, p, b);
+			}),
+		gs.board,
+		$author$project$QtttLogic$qCollapse(pot_moves));
+	return _Utils_update(
+		gs,
+		{board: new_board});
+};
 var $author$project$Test$update = F2(
 	function (msg, model) {
 		var i = msg.a;
@@ -5328,8 +5388,6 @@ var $author$project$Test$update = F2(
 				return $author$project$QtttLogic$X;
 			}
 		};
-		var new_board = model.board;
-		var n = A2($author$project$Test$getPiece, i, model.board);
 		var _v1 = function () {
 			var _v2 = model.selection;
 			if (_v2.$ === 'Just') {
@@ -5353,10 +5411,11 @@ var $author$project$Test$update = F2(
 		var new_moves = _v1.a;
 		var new_selection = _v1.b;
 		var new_turn = _v1.c;
+		var tmp_model = _Utils_update(
+			model,
+			{moves: new_moves, selection: new_selection, turn: new_turn});
 		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{board: new_board, moves: new_moves, selection: new_selection, turn: new_turn}),
+			$author$project$QtttLogic$updateBoard(tmp_model),
 			$elm$core$Platform$Cmd$none);
 	});
 var $author$project$Test$Clicked = function (a) {
@@ -5541,7 +5600,7 @@ var $author$project$Test$subCell = F3(
 	});
 var $author$project$Test$cell = F2(
 	function (i, model) {
-		var p = A2($author$project$Test$getPiece, i, model.board);
+		var p = A2($author$project$QtttLogic$getPiece, i, model.board);
 		var content = function () {
 			if (p.$ === 'Empty') {
 				return A2(
@@ -5561,7 +5620,7 @@ var $author$project$Test$cell = F2(
 			}
 		}();
 		var clickEvents = _Utils_eq(
-			A2($author$project$Test$getPiece, i, model.board),
+			A2($author$project$QtttLogic$getPiece, i, model.board),
 			$author$project$QtttLogic$Empty) ? _List_fromArray(
 			[
 				$elm$html$Html$Events$onClick(

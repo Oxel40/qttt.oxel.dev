@@ -25,11 +25,7 @@ type alias Model =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    {- ( Model (GameState (Array.repeat 9 Empty) []) Nothing X -}
-    ( GameState (Array.fromList [ Empty, Empty, X, O, Empty, Empty, Empty, Empty, Empty ])
-        [ Move 0 1 X, Move 1 5 O ]
-        Nothing
-        X
+    ( initGameState
     , Cmd.none
     )
 
@@ -43,9 +39,6 @@ update msg model =
     case msg of
         Clicked i ->
             let
-                n =
-                    getPiece i model.board
-
                 next_turn p =
                     case p of
                         X ->
@@ -75,16 +68,14 @@ update msg model =
                             , model.turn
                             )
 
-                new_board =
-                    {- Array.set i new_n model.board -}
-                    model.board
+                tmp_model =
+                    { model
+                        | moves = new_moves
+                        , selection = new_selection
+                        , turn = new_turn
+                    }
             in
-            ( { model
-                | board = new_board
-                , moves = new_moves
-                , selection = new_selection
-                , turn = new_turn
-              }
+            ( updateBoard tmp_model
             , Cmd.none
             )
 
@@ -155,16 +146,6 @@ subCell i si model =
         ]
         [ pieceSvg p
         ]
-
-
-getPiece : Int -> Array Piece -> Piece
-getPiece i arr =
-    case Array.get i arr of
-        Just v ->
-            v
-
-        Nothing ->
-            Empty
 
 
 pieceColor : Piece -> String
