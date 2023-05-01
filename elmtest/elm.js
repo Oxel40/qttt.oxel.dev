@@ -5362,6 +5362,12 @@ var $author$project$Test$update = F2(
 var $author$project$Test$Clicked = function (a) {
 	return {$: 'Clicked', a: a};
 };
+var $author$project$Test$cellColor = F2(
+	function (i, model) {
+		return _Utils_eq(
+			model.selection,
+			$elm$core$Maybe$Just(i)) ? (_Utils_eq(model.turn, $author$project$QtttLogic$X) ? 'bg-cyan-300 hover:bg-cyan-400' : 'bg-rose-300 hover:bg-rose-400') : 'bg-slate-300 hover:bg-slate-400';
+	});
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -5561,15 +5567,12 @@ var $author$project$Test$cell = F2(
 				$elm$html$Html$Events$onClick(
 				$author$project$Test$Clicked(i))
 			]) : _List_Nil;
-		var cellColor = _Utils_eq(
-			model.selection,
-			$elm$core$Maybe$Just(i)) ? (_Utils_eq(model.turn, $author$project$QtttLogic$X) ? 'bg-cyan-300 hover:bg-cyan-400' : 'bg-rose-300 hover:bg-rose-400') : 'bg-slate-300 hover:bg-slate-400';
 		return A2(
 			$elm$html$Html$div,
 			A2(
 				$elm$core$List$cons,
 				$elm$html$Html$Attributes$class(
-					$author$project$Test$pieceColor(p) + (' aspect-square p-3 rounded-lg ' + cellColor)),
+					$author$project$Test$pieceColor(p) + (' aspect-square p-3 rounded-lg ' + A2($author$project$Test$cellColor, i, model))),
 				clickEvents),
 			_List_fromArray(
 				[content]));

@@ -120,17 +120,6 @@ cell i model =
                 _ ->
                     pieceSvg p
 
-        cellColor =
-            if model.selection == Just i then
-                if model.turn == X then
-                    "bg-cyan-300 hover:bg-cyan-400"
-
-                else
-                    "bg-rose-300 hover:bg-rose-400"
-
-            else
-                "bg-slate-300 hover:bg-slate-400"
-
         clickEvents =
             if getPiece i model.board == Empty then
                 [ onClick (Clicked i) ]
@@ -139,7 +128,7 @@ cell i model =
                 []
     in
     div
-        (class (pieceColor p ++ " aspect-square p-3 rounded-lg " ++ cellColor)
+        (class (pieceColor p ++ " aspect-square p-3 rounded-lg " ++ cellColor i model)
             :: clickEvents
         )
         [ content
@@ -185,3 +174,16 @@ pieceColor p =
 
     else
         "stroke-rose-500"
+
+
+cellColor : Int -> Model -> String
+cellColor i model =
+    if model.selection == Just i then
+        if model.turn == X then
+            "bg-cyan-300 hover:bg-cyan-400"
+
+        else
+            "bg-rose-300 hover:bg-rose-400"
+
+    else
+        "bg-slate-300 hover:bg-slate-400"
