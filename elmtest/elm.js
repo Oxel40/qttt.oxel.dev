@@ -5196,17 +5196,17 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Test$Empty = {$: 'Empty'};
-var $author$project$Test$Model = F4(
+var $author$project$QtttLogic$Empty = {$: 'Empty'};
+var $author$project$QtttLogic$GameState = F4(
 	function (board, moves, selection, turn) {
 		return {board: board, moves: moves, selection: selection, turn: turn};
 	});
-var $author$project$Test$Move = F3(
+var $author$project$QtttLogic$Move = F3(
 	function (s1, s2, p) {
 		return {p: p, s1: s1, s2: s2};
 	});
-var $author$project$Test$O = {$: 'O'};
-var $author$project$Test$X = {$: 'X'};
+var $author$project$QtttLogic$O = {$: 'O'};
+var $author$project$QtttLogic$X = {$: 'X'};
 var $elm$core$Array$fromListHelp = F3(
 	function (list, nodeList, nodeListSize) {
 		fromListHelp:
@@ -5247,17 +5247,17 @@ var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Test$init = function (_v0) {
 	return _Utils_Tuple2(
 		A4(
-			$author$project$Test$Model,
+			$author$project$QtttLogic$GameState,
 			$elm$core$Array$fromList(
 				_List_fromArray(
-					[$author$project$Test$Empty, $author$project$Test$Empty, $author$project$Test$X, $author$project$Test$O, $author$project$Test$Empty, $author$project$Test$Empty, $author$project$Test$Empty, $author$project$Test$Empty, $author$project$Test$Empty])),
+					[$author$project$QtttLogic$Empty, $author$project$QtttLogic$Empty, $author$project$QtttLogic$X, $author$project$QtttLogic$O, $author$project$QtttLogic$Empty, $author$project$QtttLogic$Empty, $author$project$QtttLogic$Empty, $author$project$QtttLogic$Empty, $author$project$QtttLogic$Empty])),
 			_List_fromArray(
 				[
-					A3($author$project$Test$Move, 0, 1, $author$project$Test$X),
-					A3($author$project$Test$Move, 1, 5, $author$project$Test$O)
+					A3($author$project$QtttLogic$Move, 0, 1, $author$project$QtttLogic$X),
+					A3($author$project$QtttLogic$Move, 1, 5, $author$project$QtttLogic$O)
 				]),
 			$elm$core$Maybe$Nothing,
-			$author$project$Test$X),
+			$author$project$QtttLogic$X),
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -5314,7 +5314,7 @@ var $author$project$Test$getPiece = F2(
 			var v = _v0.a;
 			return v;
 		} else {
-			return $author$project$Test$Empty;
+			return $author$project$QtttLogic$Empty;
 		}
 	});
 var $elm$core$Basics$neq = _Utils_notEqual;
@@ -5323,9 +5323,9 @@ var $author$project$Test$update = F2(
 		var i = msg.a;
 		var next_turn = function (p) {
 			if (p.$ === 'X') {
-				return $author$project$Test$O;
+				return $author$project$QtttLogic$O;
 			} else {
-				return $author$project$Test$X;
+				return $author$project$QtttLogic$X;
 			}
 		};
 		var new_board = model.board;
@@ -5339,7 +5339,7 @@ var $author$project$Test$update = F2(
 						model.moves,
 						_List_fromArray(
 							[
-								A3($author$project$Test$Move, s, i, model.turn)
+								A3($author$project$QtttLogic$Move, s, i, model.turn)
 							])),
 					$elm$core$Maybe$Nothing,
 					next_turn(model.turn)) : _Utils_Tuple3(model.moves, $elm$core$Maybe$Nothing, model.turn);
@@ -5390,8 +5390,9 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		$elm$json$Json$Decode$succeed(msg));
 };
 var $author$project$Test$pieceColor = function (p) {
-	return _Utils_eq(p, $author$project$Test$X) ? 'stroke-cyan-500' : 'stroke-rose-500';
+	return _Utils_eq(p, $author$project$QtttLogic$X) ? 'stroke-cyan-500' : 'stroke-rose-500';
 };
+var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
 var $elm$svg$Svg$circle = $elm$svg$Svg$trustedNode('circle');
 var $elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
@@ -5401,7 +5402,7 @@ var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
 var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
 var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
 var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
-var $author$project$Piece$o = A2(
+var $author$project$PieceSvg$o = A2(
 	$elm$svg$Svg$svg,
 	_List_fromArray(
 		[
@@ -5421,13 +5422,14 @@ var $author$project$Piece$o = A2(
 				]),
 			_List_Nil)
 		]));
+var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
 var $elm$svg$Svg$line = $elm$svg$Svg$trustedNode('line');
 var $elm$svg$Svg$Attributes$strokeLinecap = _VirtualDom_attribute('stroke-linecap');
 var $elm$svg$Svg$Attributes$x1 = _VirtualDom_attribute('x1');
 var $elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
 var $elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
 var $elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
-var $author$project$Piece$x = A2(
+var $author$project$PieceSvg$x = A2(
 	$elm$svg$Svg$svg,
 	_List_fromArray(
 		[
@@ -5460,14 +5462,21 @@ var $author$project$Piece$x = A2(
 				]),
 			_List_Nil)
 		]));
-var $author$project$Test$pieceVisual = function (p) {
+var $author$project$PieceSvg$pieceSvg = function (p) {
 	switch (p.$) {
 		case 'X':
-			return $author$project$Piece$x;
+			return $author$project$PieceSvg$x;
 		case 'O':
-			return $author$project$Piece$o;
+			return $author$project$PieceSvg$o;
 		default:
-			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+			return A2(
+				$elm$svg$Svg$svg,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$width('0'),
+						$elm$svg$Svg$Attributes$height('0')
+					]),
+				_List_Nil);
 	}
 };
 var $elm$core$List$drop = F2(
@@ -5507,9 +5516,9 @@ var $author$project$Test$subCell = F3(
 				A2($elm$core$List$drop, si, model.moves));
 			if (_v0.$ === 'Just') {
 				var m = _v0.a;
-				return (_Utils_eq(m.s1, i) || _Utils_eq(m.s2, i)) ? m.p : $author$project$Test$Empty;
+				return (_Utils_eq(m.s1, i) || _Utils_eq(m.s2, i)) ? m.p : $author$project$QtttLogic$Empty;
 			} else {
-				return $author$project$Test$Empty;
+				return $author$project$QtttLogic$Empty;
 			}
 		}();
 		return A2(
@@ -5521,7 +5530,7 @@ var $author$project$Test$subCell = F3(
 				]),
 			_List_fromArray(
 				[
-					$author$project$Test$pieceVisual(p)
+					$author$project$PieceSvg$pieceSvg(p)
 				]));
 	});
 var $author$project$Test$cell = F2(
@@ -5542,19 +5551,19 @@ var $author$project$Test$cell = F2(
 						},
 						A2($elm$core$List$range, 0, 8)));
 			} else {
-				return $author$project$Test$pieceVisual(p);
+				return $author$project$PieceSvg$pieceSvg(p);
 			}
 		}();
 		var clickEvents = _Utils_eq(
 			A2($author$project$Test$getPiece, i, model.board),
-			$author$project$Test$Empty) ? _List_fromArray(
+			$author$project$QtttLogic$Empty) ? _List_fromArray(
 			[
 				$elm$html$Html$Events$onClick(
 				$author$project$Test$Clicked(i))
 			]) : _List_Nil;
 		var cellColor = _Utils_eq(
 			model.selection,
-			$elm$core$Maybe$Just(i)) ? (_Utils_eq(model.turn, $author$project$Test$X) ? 'bg-cyan-300 hover:bg-cyan-400' : 'bg-rose-300 hover:bg-rose-400') : 'bg-slate-300 hover:bg-slate-400';
+			$elm$core$Maybe$Just(i)) ? (_Utils_eq(model.turn, $author$project$QtttLogic$X) ? 'bg-cyan-300 hover:bg-cyan-400' : 'bg-rose-300 hover:bg-rose-400') : 'bg-slate-300 hover:bg-slate-400';
 		return A2(
 			$elm$html$Html$div,
 			A2(

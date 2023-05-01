@@ -5,7 +5,8 @@ import Browser
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-import Piece exposing (o, x)
+import PieceSvg exposing (pieceSvg)
+import QtttLogic exposing (..)
 
 
 main : Program () Model Msg
@@ -18,31 +19,17 @@ main =
         }
 
 
-type Piece
-    = X
-    | O
-    | Empty
-
-
-type alias Move =
-    { s1 : Int
-    , s2 : Int
-    , p : Piece
-    }
-
-
 type alias Model =
-    { board : Array Piece
-    , moves : List Move
-    , selection : Maybe Int
-    , turn : Piece
-    }
+    GameState
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    {- ( Model (Array.repeat 9 Empty) [] Nothing X -}
-    ( Model (Array.fromList [Empty, Empty, X, O, Empty, Empty, Empty, Empty, Empty]) [ Move 0 1 X, Move 1 5 O ] Nothing X
+    {- ( Model (GameState (Array.repeat 9 Empty) []) Nothing X -}
+    ( GameState (Array.fromList [ Empty, Empty, X, O, Empty, Empty, Empty, Empty, Empty ])
+        [ Move 0 1 X, Move 1 5 O ]
+        Nothing
+        X
     , Cmd.none
     )
 
@@ -131,7 +118,7 @@ cell i model =
                         (List.map (\si -> subCell i si model) (List.range 0 8))
 
                 _ ->
-                    pieceVisual p
+                    pieceSvg p
 
         cellColor =
             if model.selection == Just i then
@@ -152,8 +139,8 @@ cell i model =
                 []
     in
     div
-        ( class (pieceColor p ++ " aspect-square p-3 rounded-lg " ++ cellColor)
-        :: clickEvents
+        (class (pieceColor p ++ " aspect-square p-3 rounded-lg " ++ cellColor)
+            :: clickEvents
         )
         [ content
         ]
@@ -177,7 +164,7 @@ subCell i si model =
     div
         [ class (pieceColor p ++ " aspect-square p-3")
         ]
-        [ pieceVisual p
+        [ pieceSvg p
         ]
 
 
@@ -198,16 +185,3 @@ pieceColor p =
 
     else
         "stroke-rose-500"
-
-
-pieceVisual : Piece -> Html msg
-pieceVisual p =
-    case p of
-        X ->
-            x
-
-        O ->
-            o
-
-        _ ->
-            div [] []

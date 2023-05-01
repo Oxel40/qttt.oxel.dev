@@ -1,6 +1,7 @@
-module Piece exposing (o, x)
+module PieceSvg exposing (o, pieceSvg, x)
 
 import Html exposing (Html)
+import QtttLogic exposing (..)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
@@ -8,7 +9,7 @@ import Svg.Attributes exposing (..)
 x : Html msg
 x =
     svg
-        [viewBox "0 0 100 100"
+        [ viewBox "0 0 100 100"
         ]
         [ line
             [ x1 "20"
@@ -34,7 +35,7 @@ x =
 o : Html msg
 o =
     svg
-        [viewBox "0 0 100 100"
+        [ viewBox "0 0 100 100"
         ]
         [ circle
             [ cx "50"
@@ -45,3 +46,16 @@ o =
             ]
             []
         ]
+
+
+pieceSvg : Piece -> Html msg
+pieceSvg p =
+    case p of
+        X ->
+            x
+
+        O ->
+            o
+
+        _ ->
+            svg [ width "0", height "0" ] []
