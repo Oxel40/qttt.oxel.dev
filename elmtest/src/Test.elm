@@ -89,7 +89,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [ class "flex items-center justify-center h-screen" ]
-            [ div [ class "grow shrink max-w-3xl max-h-3xl grid grid-cols-3 gap-4" ]
+            [ div [ class "grow shrink max-w-3xl max-h-3xl grid grid-cols-3 gap-4 p-3" ]
                 (List.map (\i -> cell i model) (List.range 0 8))
             ]
         ]
@@ -142,7 +142,7 @@ subCell i si model =
                     Empty
     in
     div
-        [ class (pieceColor p ++ " aspect-square p-3")
+        [ class (pieceColor p ++ " aspect-square p-1")
         ]
         [ pieceSvg p
         ]

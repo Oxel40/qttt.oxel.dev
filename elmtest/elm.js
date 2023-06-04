@@ -5591,7 +5591,7 @@ var $author$project$Test$subCell = F3(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					$author$project$Test$pieceColor(p) + ' aspect-square p-3')
+					$author$project$Test$pieceColor(p) + ' aspect-square p-1')
 				]),
 			_List_fromArray(
 				[
@@ -5654,7 +5654,7 @@ var $author$project$Test$view = function (model) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('grow shrink max-w-3xl max-h-3xl grid grid-cols-3 gap-4')
+								$elm$html$Html$Attributes$class('grow shrink max-w-3xl max-h-3xl grid grid-cols-3 gap-4 p-3')
 							]),
 						A2(
 							$elm$core$List$map,
