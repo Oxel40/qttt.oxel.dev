@@ -8,5 +8,5 @@
 # CMD caddy RUN
 
 FROM pierrezemb/gostatic
-COPY ./output/static/ /srv/http/
+COPY ./dist/ /srv/http/
 
