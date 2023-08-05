@@ -4,5 +4,4 @@ elm-stuff
 repl-temp-*
 
 *elm.js
-output.css
-output/
+dist/
