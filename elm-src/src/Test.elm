@@ -2,11 +2,13 @@ module Test exposing (..)
 
 import Array exposing (Array)
 import Browser
+import Debug exposing (log)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import PieceSvg exposing (pieceSvg)
 import QtttLogic exposing (..)
+import Random
 
 
 main : Program () Model Msg
@@ -32,6 +34,7 @@ init _ =
 
 type Msg
     = Clicked Int
+    | Collapse Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -74,8 +77,20 @@ update msg model =
                         , selection = new_selection
                         , turn = new_turn
                     }
+
+                cmd =
+                    if new_turn /= model.turn then
+                        Random.generate Collapse (Random.int 0 1)
+
+                    else
+                        Cmd.none
             in
-            ( updateBoard tmp_model
+            ( tmp_model
+            , cmd
+            )
+
+        Collapse i ->
+            ( updateBoard i model
             , Cmd.none
             )
 
