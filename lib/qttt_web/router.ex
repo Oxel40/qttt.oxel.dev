@@ -18,6 +18,7 @@ defmodule QtttWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/board", BoardLive, :index
   end
 
   # Other scopes may use custom stacks.
