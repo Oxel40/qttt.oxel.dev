@@ -7,11 +7,15 @@ defmodule Qttt.GameBoard do
   @typedoc """
   A representation of the game board state
   """
-  @type board :: %{moves: [{integer(), integer()}], squares: %{integer() => [integer()] | piece}}
+  @type board :: %{
+          moves: [{integer(), integer()}],
+          squares: %{integer() => [integer()] | piece},
+          turn: piece
+        }
 
   @spec new() :: board
   def new() do
-    %{moves: [], squares: Map.new(1..9, fn k -> {k, []} end)}
+    %{moves: [], squares: Map.new(1..9, fn k -> {k, []} end), turn: :x}
   end
 
   @spec set_square(board, integer(), piece) :: board
@@ -47,8 +51,15 @@ defmodule Qttt.GameBoard do
       |> Map.update!(a, fn t -> [turn | t] end)
       |> Map.update!(b, fn t -> [turn | t] end)
 
+    updated_turn =
+      case board.turn do
+        :x -> :o
+        :o -> :x
+      end
+
     board
     |> Map.put(:moves, updated_moves)
     |> Map.put(:squares, updated_squares)
+    |> Map.put(:turn, updated_turn)
   end
 end
