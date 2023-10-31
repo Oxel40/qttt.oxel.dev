@@ -4,9 +4,6 @@ defmodule QtttWeb.BoardLive do
   require Logger
 
   def render(assigns) do
-    # ~H"""
-    # <BoardComponent.greet name="Mary" list={[1, 2, 3]} />
-    # """
     ~H"""
     <BoardComponent.render_board board={@board} selected={@selected} />
     """
@@ -15,9 +12,10 @@ defmodule QtttWeb.BoardLive do
   def mount(_params, _session, socket) do
     board =
       GameBoard.new()
-      # |> GameBoard.make_move(3, 4)
-      # |> GameBoard.make_move(4, 1)
-      # |> GameBoard.set_square(5, :o)
+
+    # |> GameBoard.make_move(3, 4)
+    # |> GameBoard.make_move(4, 1)
+    # |> GameBoard.set_square(5, :o)
 
     {:ok, assign(socket, board: board, selected: nil)}
   end
@@ -26,13 +24,20 @@ defmodule QtttWeb.BoardLive do
     Logger.info("Selected square #{sqr}")
     selected = socket.assigns[:selected]
 
-    if selected == nil do
-      {:noreply, assign(socket, selected: sqr)}
-    else
-      {:noreply,
-       socket
-       |> update(:board, fn board -> GameBoard.make_move(board, sqr, selected) end)
-       |> assign(:selected, nil)}
+    case selected do
+      nil ->
+        {:noreply, assign(socket, selected: sqr)}
+
+      ^sqr ->
+        {:noreply,
+         socket
+         |> assign(:selected, nil)}
+
+      snd_sqr ->
+        {:noreply,
+         socket
+         |> update(:board, fn board -> GameBoard.make_move(board, sqr, snd_sqr) end)
+         |> assign(:selected, nil)}
     end
   end
 
