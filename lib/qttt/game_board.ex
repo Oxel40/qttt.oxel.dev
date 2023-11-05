@@ -62,4 +62,19 @@ defmodule Qttt.GameBoard do
     |> Map.put(:squares, updated_squares)
     |> Map.put(:turn, updated_turn)
   end
+
+  @spec evaluate_qevents(board) :: board
+  def evaluate_qevents(board) do
+    case find_cycle(board) do
+      {:true, cycle} ->
+        board
+      :false ->
+        board
+    end
+  end
+  
+  @spec find_cycle(board) :: {:true, [integer()]} | :false
+  def find_cycle(board) do
+    :false
+  end
 end

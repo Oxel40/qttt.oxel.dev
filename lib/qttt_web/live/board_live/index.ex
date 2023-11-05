@@ -13,10 +13,6 @@ defmodule QtttWeb.BoardLive do
     board =
       GameBoard.new()
 
-    # |> GameBoard.make_move(3, 4)
-    # |> GameBoard.make_move(4, 1)
-    # |> GameBoard.set_square(5, :o)
-
     {:ok, assign(socket, board: board, selected: nil)}
   end
 
@@ -36,7 +32,11 @@ defmodule QtttWeb.BoardLive do
       snd_sqr ->
         {:noreply,
          socket
-         |> update(:board, fn board -> GameBoard.make_move(board, sqr, snd_sqr) end)
+         |> update(:board, fn board ->
+           board
+           |> GameBoard.make_move(sqr, snd_sqr)
+           |> GameBoard.evaluate_qevents()
+         end)
          |> assign(:selected, nil)}
     end
   end
