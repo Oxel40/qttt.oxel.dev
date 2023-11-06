@@ -36,6 +36,8 @@ defmodule QtttWeb.BoardLive do
            board
            |> GameBoard.make_move(sqr, snd_sqr)
            |> GameBoard.evaluate_qevents()
+           |> GameBoard.fill_in_empty_square()
+           |> GameBoard.evaluate_qevents()
          end)
          |> assign(:selected, nil)}
     end

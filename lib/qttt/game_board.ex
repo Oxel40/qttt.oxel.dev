@@ -1,4 +1,6 @@
 defmodule Qttt.GameBoard do
+  require Logger
+
   @typedoc """
   The posible piece representations
   """
@@ -63,18 +65,52 @@ defmodule Qttt.GameBoard do
     |> Map.put(:turn, updated_turn)
   end
 
+  @spec fill_in_empty_square(board) :: board
+  def fill_in_empty_square(board) do
+    turn = length(board.moves)
+    empty_sqrs = Enum.filter(Map.keys(board.squares), &Enum.empty?(board.squares[&1]))
+
+    updated_moves =
+      if turn == 8 and length(empty_sqrs) == 1 do
+        [empty_sqr] = empty_sqrs
+        board.moves ++ [{empty_sqr, empty_sqr}]
+      else
+        board.moves
+      end
+
+    updated_squares =
+      if turn == 8 and length(empty_sqrs) == 1 do
+        [empty_sqr] = empty_sqrs
+        Map.put(board.squares, empty_sqr, [turn, turn])
+      else
+        board.squares
+      end
+
+    updated_turn =
+      case board.turn do
+        :x -> :o
+        :o -> :x
+      end
+
+    board
+    |> Map.put(:moves, updated_moves)
+    |> Map.put(:squares, updated_squares)
+    |> Map.put(:turn, updated_turn)
+  end
+
   @spec evaluate_qevents(board) :: board
   def evaluate_qevents(board) do
     case find_cycle(board) do
-      {:true, cycle} ->
+      {true, cycle} ->
         board
-      :false ->
+
+      false ->
         board
     end
   end
-  
-  @spec find_cycle(board) :: {:true, [integer()]} | :false
+
+  @spec find_cycle(board) :: {true, [integer()]} | false
   def find_cycle(board) do
-    :false
+    false
   end
 end
