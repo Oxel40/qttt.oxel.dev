@@ -68,7 +68,12 @@ defmodule Qttt.GameBoard do
   @spec fill_in_empty_square(board) :: board
   def fill_in_empty_square(board) do
     turn = length(board.moves)
-    empty_sqrs = Enum.filter(Map.keys(board.squares), &Enum.empty?(board.squares[&1]))
+
+    empty_sqrs =
+      Enum.filter(
+        Map.keys(board.squares),
+        &(is_list(board.squares[&1]) && Enum.empty?(board.squares[&1]))
+      )
 
     updated_moves =
       if turn == 8 and length(empty_sqrs) == 1 do
@@ -78,18 +83,18 @@ defmodule Qttt.GameBoard do
         board.moves
       end
 
-    updated_squares =
-      if turn == 8 and length(empty_sqrs) == 1 do
-        [empty_sqr] = empty_sqrs
-        Map.put(board.squares, empty_sqr, [turn, turn])
-      else
-        board.squares
-      end
-
     updated_turn =
       case board.turn do
         :x -> :o
         :o -> :x
+      end
+
+    updated_squares =
+      if turn == 8 and length(empty_sqrs) == 1 do
+        [empty_sqr] = empty_sqrs
+        Map.put(board.squares, empty_sqr, updated_turn)
+      else
+        board.squares
       end
 
     board
@@ -100,17 +105,107 @@ defmodule Qttt.GameBoard do
 
   @spec evaluate_qevents(board) :: board
   def evaluate_qevents(board) do
-    case find_cycle(board) do
-      {true, cycle} ->
-        board
+    starters = find_cycle(board)
 
-      false ->
-        board
+    Enum.reduce(starters, board, fn mv, b -> collapse_cycle(b, mv) end)
+  end
+
+  @spec find_cycle(board) :: [{integer(), integer()}]
+  defp find_cycle(board) do
+    Logger.info(inspect(board))
+
+    {_, _, starters} =
+      board.moves
+      |> Enum.zip(0..9)
+      |> Enum.reduce({%{}, 0, []}, &cycle_reduction(board, &1, &2))
+
+    starters
+  end
+
+  @spec collapse_cycle(board, integer()) :: board
+  defp collapse_cycle(board, start_turn) do
+    {m1, m2} = Enum.at(board.moves, start_turn)
+    pos = Enum.random([m1, m2])
+    collapse_cycle(board, pos, [start_turn])
+  end
+
+  @spec collapse_cycle(board, integer(), [integer()]) :: board
+  defp collapse_cycle(board, _ocu, []) do
+    board
+  end
+
+  defp collapse_cycle(board, ocu, [turn | rest]) do
+    {m1, m2} = Enum.at(board.moves, turn)
+    pos = if(m1 == ocu, do: m2, else: m1)
+
+    if !is_list(board.squares[pos]) do
+      collapse_cycle(board, ocu, rest)
+    else
+      affected = Enum.filter(board.squares[pos], &(turn != &1))
+
+      p = if(rem(turn, 2) == 0, do: :x, else: :o)
+
+      board
+      |> set_square(pos, p)
+      |> collapse_cycle(pos, affected)
+      |> collapse_cycle(ocu, rest)
     end
   end
 
-  @spec find_cycle(board) :: {true, [integer()]} | false
-  def find_cycle(board) do
-    false
+  defp cycle_reduction(board, mv, {ents, counter, closers}) do
+    {{sqr1, sqr2}, turn} = mv
+
+    if is_atom(board.squares[sqr1]) or is_atom(board.squares[sqr2]) do
+      {ents, counter, closers}
+    else
+      match1 =
+        ents
+        |> Map.filter(fn {_k, v} ->
+          MapSet.member?(v, sqr1)
+        end)
+        |> Map.to_list()
+
+      match2 =
+        ents
+        |> Map.filter(fn {_k, v} ->
+          MapSet.member?(v, sqr2)
+        end)
+        |> Map.to_list()
+
+      new_counter =
+        if length(match1) <= 0 and length(match2) <= 0 do
+          counter + 1
+        else
+          counter
+        end
+
+      {new_ents, new_closers} =
+        case {match1, match2} do
+          {[], []} ->
+            {Map.put(ents, counter, MapSet.new([sqr1, sqr2])), closers}
+
+          {[{k, _v1}], [{k, _v2}]} ->
+            {ents, [turn | closers]}
+
+          {[{k, v}], []} ->
+            {Map.put(ents, k, MapSet.put(v, sqr2)), closers}
+
+          {[], [{k, v}]} ->
+            {Map.put(ents, k, MapSet.put(v, sqr1)), closers}
+
+          {[{k1, v1}], [{k2, v2}]} ->
+            ne =
+              ents
+              |> Map.put(k1, MapSet.union(v1, v2))
+              |> Map.delete(k2)
+
+            {ne, closers}
+
+          other ->
+            raise "Unexpected match in find_cycle, #{board} -> #{other}"
+        end
+
+      {new_ents, new_counter, new_closers}
+    end
   end
 end
