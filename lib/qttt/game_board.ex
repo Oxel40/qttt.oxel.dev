@@ -2,26 +2,20 @@ defmodule Qttt.GameBoard do
   require Logger
 
   @typedoc """
-  The posible piece representations
-  """
-  @type piece :: :x | :o
-
-  @typedoc """
   A representation of the game board state
   """
   @type board :: %{
           moves: [{integer(), integer()}],
-          squares: %{integer() => [integer()] | piece},
-          turn: piece
+          squares: %{integer() => [integer()] | integer()}
         }
 
   @spec new() :: board
   def new() do
-    %{moves: [], squares: Map.new(1..9, fn k -> {k, []} end), turn: :x}
+    %{moves: [], squares: Map.new(1..9, fn k -> {k, []} end)}
   end
 
-  @spec set_square(board, integer(), piece) :: board
-  def set_square(board, a, p) when a in 1..9 and is_atom(p) do
+  @spec set_square(board, integer(), integer()) :: board
+  def set_square(board, a, p) when a in 1..9 and is_integer(p) do
     updated_squares =
       board.squares
       |> Map.put(a, p)
@@ -31,11 +25,11 @@ defmodule Qttt.GameBoard do
 
   @spec make_move(board, integer(), integer()) :: board
   def make_move(board, a, b) when a != b and a in 1..9 and b in 1..9 do
-    if is_atom(board.squares[a]) do
+    if is_integer(board.squares[a]) do
       raise "Square #{a} is aleardy populated by piece #{board.squares[a]}"
     end
 
-    if is_atom(board.squares[b]) do
+    if is_integer(board.squares[b]) do
       raise "Square #{b} is aleardy populated by piece #{board.squares[b]}"
     end
 
@@ -53,16 +47,9 @@ defmodule Qttt.GameBoard do
       |> Map.update!(a, fn t -> [turn | t] end)
       |> Map.update!(b, fn t -> [turn | t] end)
 
-    updated_turn =
-      case board.turn do
-        :x -> :o
-        :o -> :x
-      end
-
     board
     |> Map.put(:moves, updated_moves)
     |> Map.put(:squares, updated_squares)
-    |> Map.put(:turn, updated_turn)
   end
 
   @spec fill_in_empty_square(board) :: board
@@ -83,16 +70,10 @@ defmodule Qttt.GameBoard do
         board.moves
       end
 
-    updated_turn =
-      case board.turn do
-        :x -> :o
-        :o -> :x
-      end
-
     updated_squares =
       if turn == 8 and length(empty_sqrs) == 1 do
         [empty_sqr] = empty_sqrs
-        Map.put(board.squares, empty_sqr, updated_turn)
+        Map.put(board.squares, empty_sqr, turn)
       else
         board.squares
       end
@@ -100,7 +81,6 @@ defmodule Qttt.GameBoard do
     board
     |> Map.put(:moves, updated_moves)
     |> Map.put(:squares, updated_squares)
-    |> Map.put(:turn, updated_turn)
   end
 
   @spec evaluate_qevents(board) :: board
@@ -143,10 +123,8 @@ defmodule Qttt.GameBoard do
     else
       affected = Enum.filter(board.squares[pos], &(turn != &1))
 
-      p = if(rem(turn, 2) == 0, do: :x, else: :o)
-
       board
-      |> set_square(pos, p)
+      |> set_square(pos, turn)
       |> collapse_cycle(pos, affected)
       |> collapse_cycle(ocu, rest)
     end
@@ -155,7 +133,7 @@ defmodule Qttt.GameBoard do
   defp cycle_reduction(board, mv, {ents, counter, closers}) do
     {{sqr1, sqr2}, turn} = mv
 
-    if is_atom(board.squares[sqr1]) or is_atom(board.squares[sqr2]) do
+    if is_integer(board.squares[sqr1]) or is_integer(board.squares[sqr2]) do
       {ents, counter, closers}
     else
       match1 =
