@@ -52,7 +52,7 @@ defmodule BoardComponent do
         <svg viewBox="0 0 100 100" class={piece_color(@piece)}>
           <line x1="20" y1="20" x2="80" y2="80" stroke-linecap="round" />
           <line x1="20" y1="80" x2="80" y2="20" stroke-linecap="round" />
-          <text x="0" y="50" class="font-mono text-sm stroke-1 stroke-slate-800"><%= @piece %></text>
+          <.piece_number n={assigns.piece} />
         </svg>
         """
 
@@ -60,7 +60,7 @@ defmodule BoardComponent do
         ~H"""
         <svg viewBox="0 0 100 100" class={piece_color(@piece)}>
           <circle cx="50" cy="50" r="35" strokeWidth="20" fill="none" />
-          <text x="0" y="50" class="font-mono text-sm stroke-1 stroke-slate-800"><%= @piece %></text>
+          <.piece_number n={assigns.piece} />
         </svg>
         """
 
@@ -94,5 +94,11 @@ defmodule BoardComponent do
     else
       "bg-slate-300 hover:bg-slate-400"
     end
+  end
+
+  defp piece_number(assigns) do
+    ~H"""
+    <text x="5" y="95" class="font-sans text-sm stroke-1 stroke-slate-800"><%= @n %></text>
+    """
   end
 end
