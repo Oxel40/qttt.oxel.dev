@@ -6,12 +6,13 @@ defmodule Qttt.GameBoard do
   """
   @type board :: %{
           moves: [{integer(), integer()}],
-          squares: %{integer() => [integer()] | integer()}
+          squares: %{integer() => [integer()] | integer()},
+          done: :no | integer()
         }
 
   @spec new() :: board
   def new() do
-    %{moves: [], squares: Map.new(1..9, fn k -> {k, []} end)}
+    %{moves: [], squares: Map.new(1..9, fn k -> {k, []} end), done: :no}
   end
 
   @spec set_square(board, integer(), integer()) :: board
@@ -88,6 +89,53 @@ defmodule Qttt.GameBoard do
     starters = find_cycle(board)
 
     Enum.reduce(starters, board, fn mv, b -> collapse_cycle(b, mv) end)
+  end
+
+  @spec check_win(board) :: board
+  def check_win(board) do
+    win_sequences = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+      [1, 4, 7],
+      [2, 5, 8],
+      [3, 6, 9],
+      [1, 5, 9],
+      [3, 5, 7]
+    ]
+
+    win_at =
+      win_sequences
+      |> Enum.map(fn seq ->
+        {Enum.reduce(
+           seq,
+           {true, true},
+           fn e, {even, odd} ->
+             sqr = board.squares[e]
+
+             if is_integer(sqr) do
+               {even and rem(sqr, 2) == 0, odd and rem(sqr, 2) != 0}
+             else
+               {false, false}
+             end
+           end
+         ), seq}
+      end)
+      |> Enum.map(fn {{even, odd}, seq} ->
+        if even or odd do
+          {Enum.max(Enum.map(seq, fn e -> board.squares[e] end)), seq}
+        else
+          {false, seq}
+        end
+      end)
+      |> Enum.filter(fn {a, _} -> a end)
+      |> Enum.min(fn -> false end)
+
+    if win_at do
+      %{board | done: win_at}
+    else
+      %{board | done: :no}
+    end
   end
 
   @spec find_cycle(board) :: [{integer(), integer()}]

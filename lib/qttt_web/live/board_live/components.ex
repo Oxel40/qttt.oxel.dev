@@ -3,13 +3,19 @@ defmodule BoardComponent do
   alias Phoenix.LiveView.JS
 
   def render_board(assigns) do
+    {win_r, win_sqrs} =
+      case assigns[:board].done do
+        {r, sqrs} -> {r, sqrs}
+        _ -> {false, []}
+      end
+
     ~H"""
     <div class="flex items-center justify-center h-screen">
       <div class="grow shrink max-w-3xl max-h-3xl grid grid-cols-3 gap-4 p-3">
         <%= for i <- 1..9 do %>
           <div
-            class={"#{cell_color(i, @selected, length(@board.moves))} aspect-square p-3 rounded-lg"}
-            phx-click={if !is_integer(@board.squares[i]), do: JS.push("select", value: %{"sqr" => i})}
+            class={"#{cell_color(i, @selected, length(@board.moves), Enum.member?(win_sqrs, i))} aspect-square p-3 rounded-lg"}
+            phx-click={if !is_integer(@board.squares[i]) and !win_r, do: JS.push("select", value: %{"sqr" => i})}
           >
             <.render_cell i={i} board={@board} ) />
           </div>
@@ -82,7 +88,7 @@ defmodule BoardComponent do
     end
   end
 
-  defp cell_color(cell, selected, turn) do
+  defp cell_color(cell, selected, turn, in_win) do
     if cell == selected do
       case rem(turn, 2) do
         0 ->
@@ -92,7 +98,11 @@ defmodule BoardComponent do
           "bg-rose-300 hover:bg-rose-400"
       end
     else
-      "bg-slate-300 hover:bg-slate-400"
+      if in_win do
+        "bg-amber-300 hover:bg-amber-400"
+      else
+        "bg-slate-300 hover:bg-slate-400"
+      end
     end
   end
 
