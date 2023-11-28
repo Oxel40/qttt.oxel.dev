@@ -14,7 +14,8 @@ defmodule Qttt.Application do
       # Start a worker by calling: Qttt.Worker.start_link(arg)
       # {Qttt.Worker, arg},
       # Start to serve requests, typically the last entry
-      QtttWeb.Endpoint
+      QtttWeb.Endpoint,
+      Qttt.Python
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
