@@ -11,7 +11,7 @@ swap_size_mb = 512
 [build]
 
 [env]
-  PHX_HOST = "qttt-oxel-dev.fly.dev"
+  PHX_HOST = "qttt.oxel.dev"
   PORT = "8080"
 
 [http_service]
