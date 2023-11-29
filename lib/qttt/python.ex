@@ -31,6 +31,11 @@ defmodule Qttt.Python do
     end
   end
 
+  @impl true
+  def handle_info({:DOWN, _ref, :port, _object, _reason}, port) do
+    {:stop, "port down", port}
+  end
+
   ## Client API
 
   def start_link(opts) do
