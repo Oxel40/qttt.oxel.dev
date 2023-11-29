@@ -16,7 +16,7 @@ defmodule BoardComponent do
         <%= for i <- 1..9 do %>
           <div
             class={"#{cell_color(i, @selected, length(@board.moves), Enum.member?(@win.sqrs, i))} aspect-square p-3 rounded-lg"}
-            phx-click={if !is_integer(@board.squares[i]) and !@win.r, do: JS.push("select", value: %{"sqr" => i})}
+            phx-click={if !is_integer(@board.squares[i]) and !@win.round, do: JS.push("select", value: %{"sqr" => i})}
           >
             <.render_cell i={i} board={@board} ) />
           </div>
