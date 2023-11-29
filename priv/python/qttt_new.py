@@ -3,8 +3,8 @@ from copy import deepcopy
 from tqdm import trange
 import json
 import math
+import numpy as np
 import qtttgym
-import random
 import sys
 
 _TTTB = namedtuple("TicTacToeBoard", "tup turn winner terminal")
@@ -119,7 +119,7 @@ class QTTTGame():
             # node has not been fully expanded
             # only expand the child of this action
             self._expand_child(self.root, action)
-        self.root = random.choice(self.root.children[action])
+        self.root = np.random.choice(self.root.children[action])
 
     def choose(self):
         n = self.root
@@ -203,7 +203,7 @@ class QTTTGame():
             if node.children[a] is None:
                 self._expand_child(node, a)
             path.append((node, a))
-            node = random.choice(node.children[a])
+            node = np.random.choice(node.children[a])
         return path, node
 
     def _simulate(self, node: GameState) -> list[tuple[GameState, int]]:
@@ -216,7 +216,7 @@ class QTTTGame():
             # Sample an action according to P
             a = self.sample_action(node)
             nodes = self._step(node, a)
-            node = random.choice(nodes)
+            node = np.random.choice(nodes)
             # node = node.children[a]
             # node = self._step(node, a)
             invert_reward = not invert_reward
@@ -278,7 +278,7 @@ class QTTTGame():
         return {a: 1/len(node.actions) for a in node.actions}
 
     def sample_action(self, node: GameState):
-        return random.choice(node.actions, p=list(node.P.values()))
+        return np.random.choice(node.actions, p=list(node.P.values()))
 
 
 def _winning_combos():
@@ -324,13 +324,17 @@ def get_move(game):
 
 
 def parse_board(board):
-    squares = {}
-    for k, v in board["squares"].items():
-        squares[int(k)] = v if isinstance(v, int) else -1
+    squares = []
+    for v in board["squares"].values():
+        squares.append(v if isinstance(v, int) else -1)
+
+    deb_print(squares)
 
     moves = []
     for i, v in enumerate(board["moves"]):
         moves.append((v[0], v[1], i))
+
+    deb_print(moves)
 
     turn = len(moves) % 2 == 0,
 
