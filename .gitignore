@@ -35,3 +35,4 @@ qttt-*.tar
 npm-debug.log
 /assets/node_modules/
 
+__pycache__

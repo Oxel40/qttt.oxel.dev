@@ -1,5 +1,6 @@
 defmodule QtttWeb.BoardLive do
   alias Qttt.GameBoard
+  alias Qttt.Python, as: PY
   use QtttWeb, :live_view
   require Logger
 
@@ -13,7 +14,7 @@ defmodule QtttWeb.BoardLive do
     board =
       GameBoard.new()
 
-    socket = 
+    socket =
       socket
       |> assign(board: board, selected: nil)
 
@@ -42,6 +43,7 @@ defmodule QtttWeb.BoardLive do
            |> GameBoard.evaluate_qevents()
            |> GameBoard.fill_in_empty_square()
            |> GameBoard.check_win()
+           |> PY.ai_move()
          end)
          |> assign(:selected, nil)}
     end
