@@ -55,6 +55,9 @@ defmodule Qttt.Python do
 
     conv_squares =
       board.squares
+      # |> Enum.map(fn {k,v} -> {k, v} end)
+      |> Enum.sort()
+      |> Enum.map(fn {_k, v} -> if(is_integer(v), do: v, else: -1) end)
 
     json = Jason.encode!(%{"moves" => conv_moves, "squares" => conv_squares})
 
@@ -64,6 +67,6 @@ defmodule Qttt.Python do
       |> Jason.decode!()
       |> IO.inspect(label: "from python decoded")
 
-    board
+      List.to_tuple(res["move"])
   end
 end

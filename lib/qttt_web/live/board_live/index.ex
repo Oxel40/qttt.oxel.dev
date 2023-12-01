@@ -43,7 +43,10 @@ defmodule QtttWeb.BoardLive do
            |> GameBoard.evaluate_qevents()
            |> GameBoard.fill_in_empty_square()
            |> GameBoard.check_win()
-           |> PY.ai_move()
+           |> (fn board ->
+                 {ai_sqr1, ai_sqr2} = PY.ai_move(board)
+                 GameBoard.make_move(board, ai_sqr1, ai_sqr2)
+               end).()
          end)
          |> assign(:selected, nil)}
     end

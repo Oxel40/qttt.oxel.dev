@@ -112,6 +112,9 @@ class QTTTGame():
         self.nodes: dict[int, self.GameState] = dict()
         self.nodes[hash(self.root)] = self.root
 
+        for move in moves:
+            self.root.update_qstructs(move)
+
     def make_move(self, action):
         if action not in self.root.children:
             raise Exception("Invalid Action")
@@ -320,13 +323,11 @@ def get_move(game):
     for i in range(600):
         game.do_rollout()
 
-    return game.choose()
+    return ind2move(game.choose())
 
 
 def parse_board(board):
-    squares = []
-    for v in board["squares"].values():
-        squares.append(v if isinstance(v, int) else -1)
+    squares = board["squares"]
 
     deb_print(squares)
 
