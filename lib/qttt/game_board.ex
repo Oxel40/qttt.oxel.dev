@@ -13,13 +13,10 @@ defmodule Qttt.GameBoard do
 
   @spec new() :: board
   def new() do
-    %{moves: [],
-    squares: Map.new(1..9, fn k -> {k, []} end),
-    done: false,
-    disable: false}
+    %{moves: [], squares: Map.new(1..9, fn k -> {k, []} end), done: false, disable: false}
   end
 
-  @spec set_disable(board, boolean()) ::board
+  @spec set_disable(board, boolean()) :: board
   def set_disable(board, val) do
     %{board | disable: val}
   end
@@ -149,8 +146,6 @@ defmodule Qttt.GameBoard do
 
   @spec find_cycle(board) :: [{integer(), integer()}]
   defp find_cycle(board) do
-    Logger.info(inspect(board))
-
     {_, _, starters} =
       board.moves
       |> Enum.zip(0..9)

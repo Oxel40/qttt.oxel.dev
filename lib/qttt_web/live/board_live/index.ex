@@ -39,7 +39,6 @@ defmodule QtttWeb.BoardLive do
   end
 
   def handle_event("select", %{"sqr" => sqr}, socket) do
-    Logger.info("Selected square #{sqr}")
     selected = socket.assigns[:selected]
 
     case selected do
