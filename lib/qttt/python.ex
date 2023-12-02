@@ -52,6 +52,7 @@ defmodule Qttt.Python do
     conv_moves =
       board.moves
       |> Enum.map(&Tuple.to_list/1)
+      |> Enum.map(fn t -> Enum.map(t, &(&1 - 1)) end)
 
     conv_squares =
       board.squares
@@ -67,6 +68,8 @@ defmodule Qttt.Python do
       |> Jason.decode!()
       |> IO.inspect(label: "from python decoded")
 
-      List.to_tuple(res["move"])
+    res["move"]
+    |> Enum.map(&(&1 + 1))
+    |> List.to_tuple()
   end
 end

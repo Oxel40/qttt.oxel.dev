@@ -7,12 +7,21 @@ defmodule Qttt.GameBoard do
   @type board :: %{
           moves: [{integer(), integer()}],
           squares: %{integer() => [integer()] | integer()},
-          done: :no | integer()
+          done: :false | integer(),
+          disable: boolean()
         }
 
   @spec new() :: board
   def new() do
-    %{moves: [], squares: Map.new(1..9, fn k -> {k, []} end), done: :no}
+    %{moves: [],
+    squares: Map.new(1..9, fn k -> {k, []} end),
+    done: false,
+    disable: false}
+  end
+
+  @spec set_disable(board, boolean()) ::board
+  def set_disable(board, val) do
+    %{board | disable: val}
   end
 
   @spec set_square(board, integer(), integer()) :: board

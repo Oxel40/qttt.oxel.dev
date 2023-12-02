@@ -7,6 +7,8 @@ import numpy as np
 import qtttgym
 import sys
 
+np.random.seed(1)
+
 _TTTB = namedtuple("TicTacToeBoard", "tup turn winner terminal")
 
 NodeType = int
@@ -108,12 +110,19 @@ class QTTTGame():
 
     def __init__(self, board=[-1]*9, moves=[], turn=True, winner=None, terminal=False):
         self.root = self.GameState(board, moves, turn, winner, terminal)
+        #print("-", self.root.board)
         self.c_puct = 1
         self.nodes: dict[int, self.GameState] = dict()
         self.nodes[hash(self.root)] = self.root
 
-        for move in moves:
+        gen = (m for m in moves if board[m[0]] < 0 and board[m[1]] < 0)
+        for move in gen:
+            #print("added", move)
             self.root.update_qstructs(move)
+        self.root.update_actions()
+        #print("MARK")
+        #print("-", self.root)
+        #print("-", self.root.board)
 
     def make_move(self, action):
         if action not in self.root.children:
@@ -217,6 +226,9 @@ class QTTTGame():
                 # Evaluate the action probabilities of this Node
                 node.P = self.get_action_probs(node)
             # Sample an action according to P
+            #print(node)
+            #print(node.moves)
+            #print(node.terminal)
             a = self.sample_action(node)
             nodes = self._step(node, a)
             node = np.random.choice(nodes)
@@ -346,6 +358,8 @@ def parse_board(board):
         None,
         False
     )
+    #print("__init__")
+    #print(game.root)
 
     return game
 
