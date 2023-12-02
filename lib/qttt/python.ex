@@ -63,7 +63,7 @@ defmodule Qttt.Python do
     json = Jason.encode!(%{"moves" => conv_moves, "squares" => conv_squares})
 
     res =
-      GenServer.call(:_qttt_python, "#{json}\n")
+      GenServer.call(:_qttt_python, "#{json}\n", 40000)
       |> IO.inspect(label: "from python")
       |> Jason.decode!()
       |> IO.inspect(label: "from python decoded")

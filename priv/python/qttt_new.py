@@ -7,8 +7,6 @@ import numpy as np
 import qtttgym
 import sys
 
-np.random.seed(1)
-
 _TTTB = namedtuple("TicTacToeBoard", "tup turn winner terminal")
 
 NodeType = int
@@ -332,9 +330,10 @@ def move2ind(i, j):
 
 
 def get_move(game):
-    for i in range(800):
+    for i in range(4000):
         game.do_rollout()
 
+    deb_print("Q", game.root.Q[game.choose()])
     return ind2move(game.choose())
 
 
@@ -349,7 +348,7 @@ def parse_board(board):
 
     deb_print(moves)
 
-    turn = len(moves) % 2 == 0,
+    turn = len(moves) % 2 == 0
 
     game = QTTTGame(
         squares,

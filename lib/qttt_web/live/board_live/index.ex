@@ -56,7 +56,7 @@ defmodule QtttWeb.BoardLive do
          socket
          |> handle_turn(sqr, snd_sqr)
          |> (fn skt ->
-               if skt.assigns[:mode] == :ai and !skt.assigns[:done] do
+               if skt.assigns.mode == :ai and !skt.assigns.board.done do
                  send(self(), "ai move")
                  put_flash(skt, :info, "AI is making a move...")
                else

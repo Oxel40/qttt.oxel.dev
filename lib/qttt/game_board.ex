@@ -7,7 +7,7 @@ defmodule Qttt.GameBoard do
   @type board :: %{
           moves: [{integer(), integer()}],
           squares: %{integer() => [integer()] | integer()},
-          done: :false | integer(),
+          done: false | integer(),
           disable: boolean()
         }
 
@@ -143,7 +143,7 @@ defmodule Qttt.GameBoard do
     if win_at do
       %{board | done: win_at}
     else
-      %{board | done: :no}
+      %{board | done: false}
     end
   end
 
