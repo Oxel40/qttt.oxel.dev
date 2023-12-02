@@ -10,13 +10,30 @@ defmodule QtttWeb.BoardLive do
     """
   end
 
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
+    mode =
+      if params["mode"] do
+        case params["mode"] do
+          "ai" -> :ai
+          _ -> nil
+        end
+      else
+        :local
+      end
+
+    socket =
+      if mode do
+        assign(socket, mode: mode)
+      else
+        redirect(socket, to: ~p"/")
+      end
+
     board =
       GameBoard.new()
 
     socket =
       socket
-      |> assign(board: board, selected: nil, mode: :ai, turn: :local)
+      |> assign(board: board, selected: nil, mode: mode, turn: :local)
 
     {:ok, socket, layout: {QtttWeb.Layouts, :blank}}
   end

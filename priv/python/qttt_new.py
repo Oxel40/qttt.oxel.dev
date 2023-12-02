@@ -332,7 +332,7 @@ def move2ind(i, j):
 
 
 def get_move(game):
-    for i in range(600):
+    for i in range(800):
         game.do_rollout()
 
     return ind2move(game.choose())
