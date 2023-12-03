@@ -9,13 +9,18 @@ defmodule BoardComponent do
         _ -> {false, []}
       end
 
+    assigns = assign(assigns, :win, %{round: win_r, sqrs: win_sqrs})
+
     ~H"""
     <div class="flex items-center justify-center h-screen">
       <div class="grow shrink max-w-3xl max-h-3xl grid grid-cols-3 gap-4 p-3">
         <%= for i <- 1..9 do %>
           <div
-            class={"#{cell_color(i, @selected, length(@board.moves), Enum.member?(win_sqrs, i))} aspect-square p-3 rounded-lg"}
-            phx-click={if !is_integer(@board.squares[i]) and !win_r, do: JS.push("select", value: %{"sqr" => i})}
+            class={"#{cell_color(i, @selected, length(@board.moves), Enum.member?(@win.sqrs, i))} aspect-square p-3 rounded-lg"}
+            phx-click={
+              if !is_integer(@board.squares[i]) and !@win.round and !@board.disable,
+                do: JS.push("select", value: %{"sqr" => i})
+            }
           >
             <.render_cell i={i} board={@board} ) />
           </div>

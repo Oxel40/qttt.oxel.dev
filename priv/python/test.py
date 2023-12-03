@@ -1,8 +1,14 @@
-def add(a: int, b: int):
-    return a+b
+import sys
+import json
+
+
+def deb_print(*args, **kwargs):
+    print(*args, **kwargs, file=sys.stderr)
+
 
 if __name__ == "__main__":
     while True:
         inp = input()
-        args = map(int, inp.split())
-        print(add(*args))
+        board = json.loads(inp)
+        deb_print(board)
+        print(json.dumps(board))

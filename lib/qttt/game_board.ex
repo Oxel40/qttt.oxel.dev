@@ -7,12 +7,18 @@ defmodule Qttt.GameBoard do
   @type board :: %{
           moves: [{integer(), integer()}],
           squares: %{integer() => [integer()] | integer()},
-          done: :no | integer()
+          done: boolean() | integer(),
+          disable: boolean()
         }
 
   @spec new() :: board
   def new() do
-    %{moves: [], squares: Map.new(1..9, fn k -> {k, []} end), done: :no}
+    %{moves: [], squares: Map.new(1..9, fn k -> {k, []} end), done: false, disable: false}
+  end
+
+  @spec set_disable(board, boolean()) :: board
+  def set_disable(board, val) do
+    %{board | disable: val}
   end
 
   @spec set_square(board, integer(), integer()) :: board
@@ -134,14 +140,12 @@ defmodule Qttt.GameBoard do
     if win_at do
       %{board | done: win_at}
     else
-      %{board | done: :no}
+      %{board | done: length(board.moves) >= 9}
     end
   end
 
   @spec find_cycle(board) :: [{integer(), integer()}]
   defp find_cycle(board) do
-    Logger.info(inspect(board))
-
     {_, _, starters} =
       board.moves
       |> Enum.zip(0..9)
