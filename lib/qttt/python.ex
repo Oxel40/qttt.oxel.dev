@@ -1,14 +1,27 @@
 defmodule Qttt.Python do
   use GenServer
+  require Logger
 
   ## Server Backend
 
   @impl true
   def init(_) do
-    [python_path | _] =
+    path_candidates =
       ["python3", "python"]
       |> Enum.map(&System.find_executable/1)
       |> Enum.filter(fn e -> !is_nil(e) end)
+
+    python_path =
+      case path_candidates do
+        [p | _] ->
+          Logger.info("Python found at #{p}")
+          p
+
+        _ ->
+          backup_path = "/usr/bin/python3"
+          Logger.warning("No python or python3 found, using #{backup_path}")
+          backup_path
+      end
 
     script_path = Path.join([:code.priv_dir(:qttt), "python", "qttt_new.py"])
 

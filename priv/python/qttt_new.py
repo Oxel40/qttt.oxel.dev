@@ -1,6 +1,5 @@
 from collections import namedtuple
 from copy import deepcopy
-from tqdm import trange
 import json
 import math
 import numpy as np
