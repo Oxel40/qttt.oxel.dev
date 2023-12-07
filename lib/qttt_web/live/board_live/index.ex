@@ -12,13 +12,10 @@ defmodule QtttWeb.BoardLive do
 
   def mount(params, _session, socket) do
     mode =
-      if params["mode"] do
-        case params["mode"] do
-          "ai" -> :ai
-          _ -> nil
-        end
-      else
-        :local
+      case params["mode"] do
+        "ai" -> :ai
+        "local" -> :local
+        _ -> nil
       end
 
     socket =
