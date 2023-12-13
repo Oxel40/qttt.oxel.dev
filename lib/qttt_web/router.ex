@@ -19,6 +19,7 @@ defmodule QtttWeb.Router do
 
     get "/", PageController, :home
     live "/:mode", BoardLive, :index
+    live "/:mode/:uid", BoardLive, :index
   end
 
   # Other scopes may use custom stacks.

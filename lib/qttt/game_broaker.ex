@@ -11,14 +11,14 @@ defmodule Qttt.GameBroker do
   end
 
   @impl true
-  def handle_call(:open, _from, games) do
+  def handle_call({:open, mode}, _from, games) do
     uid = generate_uid(games)
 
     if is_nil(uid) or Map.has_key?(games, uid) do
       {:reply, :error, games}
     else
-      {:ok, pid} = Qttt.GameMaster.start_link()
-      Logger.info("Started GameMaster at #{inspect(pid)}")
+      {:ok, pid} = Qttt.GameMaster.start_link_in_mode(mode)
+      Logger.info("Started GameMaster at #{inspect(pid)} in #{inspect(mode)} mode")
 
       new_games =
         games
@@ -71,8 +71,8 @@ defmodule Qttt.GameBroker do
     GenServer.start_link(__MODULE__, :ok, [name: __MODULE__] ++ opts)
   end
 
-  def open() do
-    GenServer.call(__MODULE__, :open)
+  def open(mode) do
+    GenServer.call(__MODULE__, {:open, mode})
   end
 
   def lookup(uid) do

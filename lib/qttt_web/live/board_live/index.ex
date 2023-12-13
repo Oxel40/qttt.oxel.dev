@@ -1,6 +1,6 @@
 defmodule QtttWeb.BoardLive do
   alias Qttt.GameBoard
-  alias Qttt.Python, as: PY
+  # alias Qttt.Python, as: PY
   use QtttWeb, :live_view
   require Logger
 
@@ -10,28 +10,48 @@ defmodule QtttWeb.BoardLive do
     """
   end
 
-  def mount(params, _session, socket) do
-    mode =
-      case params["mode"] do
-        "ai" -> :ai
-        "local" -> :local
-        "online" -> :online
-        _ -> nil
-      end
-
-    socket =
-      if mode do
-        assign(socket, mode: mode)
-      else
-        redirect(socket, to: ~p"/")
-      end
-
-    board =
-      GameBoard.new()
+  def mount(%{"mode" => "online", "uid" => uid}, _session, socket) do
+    {:ok, pid} = Qttt.GameBroker.lookup(uid)
+    {:ok, board} = Qttt.GameMaster.join(pid)
 
     socket =
       socket
-      |> assign(board: board, selected: nil, mode: mode, turn: :local)
+      |> assign(board: board, selected: nil, mode: :online, turn: :local, gm: pid)
+
+    {:ok, socket, layout: {QtttWeb.Layouts, :blank}}
+  end
+
+  # TODO make an actual interface from this
+  def mount(%{"mode" => "online"}, _session, socket) do
+    {:ok, uid, _pid} = Qttt.GameBroker.open(:online)
+    {:ok, redirect(socket, to: ~p"/online/#{uid}"), layout: {QtttWeb.Layouts, :blank}}
+  end
+
+  def mount(%{"mode" => mode}, _session, socket) do
+    mode =
+      case mode do
+        "ai" -> :ai
+        "local" -> :local
+        _ -> nil
+      end
+
+    if is_nil(mode) do
+      {:ok, redirect(socket, to: ~p"/"), layout: {QtttWeb.Layouts, :blank}}
+    else
+      {:ok, _uid, pid} = Qttt.GameBroker.open(mode)
+      {:ok, board} = Qttt.GameMaster.join(pid)
+
+      socket =
+        socket
+        |> assign(board: board, selected: nil, mode: mode, turn: :local, gm: pid)
+
+      {:ok, socket, layout: {QtttWeb.Layouts, :blank}}
+    end
+  end
+
+  def mount(_params, _session, socket) do
+    socket =
+      redirect(socket, to: ~p"/")
 
     {:ok, socket, layout: {QtttWeb.Layouts, :blank}}
   end
@@ -52,15 +72,6 @@ defmodule QtttWeb.BoardLive do
         {:noreply,
          socket
          |> handle_turn(sqr, snd_sqr)
-         |> (fn skt ->
-               if skt.assigns.mode == :ai and !skt.assigns.board.done do
-                 send(self(), "ai move")
-                 put_flash(skt, :info, "AI is making a move...")
-               else
-                 skt
-               end
-             end).()
-         |> disable_board(socket.assigns[:mode] != :local)
          |> assign(:selected, nil)}
     end
   end
@@ -70,38 +81,17 @@ defmodule QtttWeb.BoardLive do
     {:noreply, socket}
   end
 
-  def handle_info("ai move", socket) do
-    {ai_sqr1, ai_sqr2} = PY.ai_move(socket.assigns[:board])
+  def handle_info({:board_update, board}, socket) do
+    {:noreply, assign(socket, :board, board)}
+  end
 
-    {:noreply,
-     socket
-     |> clear_flash()
-     |> handle_turn(ai_sqr1, ai_sqr2)
-     |> disable_board(false)}
+  def handle_info({:turn_update, turn}, socket) do
+    {:noreply, disable_board(socket, !turn)}
   end
 
   defp handle_turn(socket, sqr1, sqr2) do
-    socket
-    |> update(:board, fn board ->
-      board
-      |> GameBoard.make_move(sqr1, sqr2)
-      |> GameBoard.evaluate_qevents()
-      |> GameBoard.fill_in_empty_square()
-      |> GameBoard.check_win()
-
-      # |> (fn board ->
-      #       is_done? = socket.assigns[:done]
-      #       is_ai? = socket.assigns[:mode] == :ai
-      #       is_disabled? = socket.assigns[:disable]
-
-      #       if is_ai? and !is_disabled? and !is_done? do
-      #         send(self(), "ai move")
-      #         %{board | disable: true}
-      #       else
-      #         %{board | disable: false}
-      #       end
-      #     end).()
-    end)
+    {:ok, board} = Qttt.GameMaster.make_move(socket.assigns.gm, {sqr1, sqr2})
+    assign(socket, :board, board)
   end
 
   defp disable_board(socket, val) do
