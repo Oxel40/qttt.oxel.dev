@@ -15,6 +15,7 @@ defmodule Qttt.Application do
       # {Qttt.Worker, arg},
       # Start to serve requests, typically the last entry
       QtttWeb.Endpoint,
+      Qttt.GameBroker,
       Qttt.Python
     ]
 

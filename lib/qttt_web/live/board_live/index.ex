@@ -15,6 +15,7 @@ defmodule QtttWeb.BoardLive do
       case params["mode"] do
         "ai" -> :ai
         "local" -> :local
+        "online" -> :online
         _ -> nil
       end
 
