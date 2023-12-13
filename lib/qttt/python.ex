@@ -52,11 +52,11 @@ defmodule Qttt.Python do
   ## Client API
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, :ok, [name: :_qttt_python] ++ opts)
+    GenServer.start_link(__MODULE__, :ok, [name: __MODULE__] ++ opts)
   end
 
   def add(a, b) do
-    GenServer.call(:_qttt_python, "#{a} #{b}\n")
+    GenServer.call(__MODULE__, "#{a} #{b}\n")
     |> String.trim_trailing()
     |> String.to_integer()
   end
@@ -76,7 +76,7 @@ defmodule Qttt.Python do
     json = Jason.encode!(%{"moves" => conv_moves, "squares" => conv_squares})
 
     res =
-      GenServer.call(:_qttt_python, "#{json}\n", 40000)
+      GenServer.call(__MODULE__, "#{json}\n", 40000)
       |> IO.inspect(label: "from python")
       |> Jason.decode!()
       |> IO.inspect(label: "from python decoded")

@@ -68,14 +68,14 @@ defmodule Qttt.GameBroker do
   ## Client API
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, :ok, [name: :_qttt_game_broker] ++ opts)
+    GenServer.start_link(__MODULE__, :ok, [name: __MODULE__] ++ opts)
   end
 
   def open() do
-    GenServer.call(:_qttt_game_broker, :open)
+    GenServer.call(__MODULE__, :open)
   end
 
   def lookup(uid) do
-    GenServer.call(:_qttt_game_broker, {:lookup, uid})
+    GenServer.call(__MODULE__, {:lookup, uid})
   end
 end
